@@ -29,6 +29,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/ekudinov/gopherjs/breload"
 	gbuild "github.com/gopherjs/gopherjs/build"
 	"github.com/gopherjs/gopherjs/compiler"
 	"github.com/kisielk/gotool"
@@ -476,6 +477,9 @@ func main() {
 	var addr string
 	cmdServe.Flags().StringVarP(&addr, "http", "", ":8080", "HTTP bind address to serve")
 	cmdServe.Run = func(cmd *cobra.Command, args []string) {
+		// start browser reloader
+		go breload.StartBrowserReloader()
+
 		options.BuildTags = strings.Fields(tags)
 		dirs := append(filepath.SplitList(build.Default.GOPATH), build.Default.GOROOT)
 		var root string
@@ -507,6 +511,7 @@ func main() {
 			fmt.Printf("serving at http://%s\n", tcpAddr)
 		}
 		fmt.Fprintln(os.Stderr, http.Serve(tcpKeepAliveListener{ln.(*net.TCPListener)}, sourceFiles))
+
 	}
 
 	cmdVersion := &cobra.Command{

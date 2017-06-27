@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+<!--    Taken from https://github.com/markvincze/golang-reload-browser/blob/master/reloadtest.html
+	Author and Idea:Mark Vincze https://github.com/markvincze
+	Author(2017):Evgeniy Kudinov https://github.com/ekudinov
+-->
+    <script type="text/javascript">
+function tryConnectToReload(address) {
+  var conn = new WebSocket(address);
+  conn.onclose = function() {
+    setTimeout(function() {
+      tryConnectToReload(address);
+    }, 2000);
+  };
+  conn.onmessage = function(evt) {
+    location.reload()
+  };
+}
+try {
+  if (window["WebSocket"]) {
+    try {
+      tryConnectToReload("ws://localhost:12450/reload");
+    }
+    catch (ex) {
+      tryConnectToReload("wss://localhost:12451/reload");
+    }
+  } else {
+    console.log("Your browser does not support WebSockets, cannot connect to the Reload service.");
+  }
+} catch (ex) {
+  console.error('Exception during connecting to Reload:', ex);
+}
+</script>
+
+<title>Dev page</title>
+</head>
+<body>
+	<!-- This file you must put somewhere in work gopherjs directory
+	<div id="app"></div>
+	<script src="assets/jquery.min.js"></script>
+	<script src="someapp.js"></script>	
+	-->
+</body>
+</html>
